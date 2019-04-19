@@ -1,0 +1,49 @@
+<div class="margin-offset-border-little" style="text-align:center">
+
+    <!-- Title -->
+    <h1>
+        {{ title }}
+    </h1>
+
+    <img width="200" alt="Weather Logo" src="assets/img/weatherLogo.png">
+
+    <form role="form" [formGroup]="cityWheaterForecastForm" #formWeather>
+
+        <!-- City selection  -->
+        <div class="margin-offset-border-little" style="text-align:center">
+
+            <mat-form-field>
+
+                <mat-label>* Select a City</mat-label>
+                <mat-select matInput name="mySelect" disableOptionCentering formControlName="cityName">
+
+                    <mat-option *ngFor="let city of cities" [value]="city.value">
+                        {{city.value}}
+                    </mat-option>
+
+                </mat-select>
+
+            </mat-form-field>
+
+        </div>
+
+        <!-- Weather forecast days option -->
+        <br>
+        <mat-radio-group aria-label="Select an option" formControlName="dayChoose">
+            <mat-radio-button value="1">1 Day Forecast</mat-radio-button>
+            <mat-radio-button value="3">3 Days Forecast</mat-radio-button>
+        </mat-radio-group>
+
+    </form>
+
+    <br>
+
+    <button mat-raised-button color="primary" [disabled]="!isWeatherForecastFormValid()" (click)="searchWeatherInfo()">Buscar</button>
+
+    <br>
+
+    <!--- View weather forecast information-->
+    <hr>
+    <p>Info</p>
+
+</div>

@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { WeatherInfo } from '../../models/weather-info';
+import { ProvinceInfo } from '../../models/province-info';
+import { ProvincesArgentinaService } from '../../services/provinces-argentina.service';
+import { WeatherForecastService } from '../../services/weather-forecast.service';
+
 
 
 @Component({
@@ -9,54 +13,69 @@ import { WeatherInfo } from '../../models/weather-info';
 })
 export class CityWeatherForecastComponent implements OnInit {
 
+  // ----------------------------------
+  // --> Attributes
+  // ----------------------------------
+
   title = 'Argentina Weather Forecast';
   weatherInfo: WeatherInfo = {
 
-    cityName: '',
+    provinceName: '',
     dayChoose: ''
 
   }
 
-  cities: any[] = [
-
-    { value: 'Mendoza' },
-    { value: 'Buenos Aires' },
-    { value: 'Córdoba' }
-
-  ];
-
+  provinces: ProvinceInfo[];
   cityWheaterForecastForm: FormGroup;
 
+  // ----------------------------------
+  // ---> Constructor / OnInit
+  // ----------------------------------
+
   constructor(
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private _provinceArgentinaService: ProvincesArgentinaService,
+    private _weatherForecastService: WeatherForecastService
   ) { }
 
   ngOnInit() {
 
+    this.provinces = this._provinceArgentinaService.getProvinces();
     this.cityWheaterForecastForm = this.buildFormCityWheaterForecast();
 
   }
 
+  // ----------------------------------
+  // ---> General Functions
+  // ----------------------------------
   searchWeatherInfo() {
 
-    this.weatherInfoJsonToModel( this.cityWheaterForecastForm.value );
-    console.log( JSON.stringify( this.weatherInfo, null , 2 ) );
+    let _id = this.cityWheaterForecastForm.value.provinceObject.id;
+    let _days = this.cityWheaterForecastForm.value.dayChoose;
+
+    this._weatherForecastService.getForecastDialy(_id, _days );
 
   }
 
 
+  // ----------------------------------
+  // ---> Transform Functions
+  // ----------------------------------
   weatherInfoJsonToModel( _json ) {
 
-    this.weatherInfo.cityName = _json.cityName;
+    this.weatherInfo.provinceName = _json.provinceName;
     this.weatherInfo.dayChoose = _json.dayChoose;
 
   }
 
+  // ----------------------------------
+  // ---> Forms functions
+  // ----------------------------------
   buildFormCityWheaterForecast() {
 
     return this.formBuilder.group({
 
-      cityName: ['', Validators.required],
+      provinceObject: ['', Validators.required],
       dayChoose: ['', Validators.required]
 
     });
@@ -65,7 +84,7 @@ export class CityWeatherForecastComponent implements OnInit {
 
   isWeatherForecastFormValid(): boolean {
 
-    return ( this.cityWheaterForecastForm.get('cityName').valid && this.cityWheaterForecastForm.get('dayChoose').valid )
+    return ( this.cityWheaterForecastForm.get('provinceObject').valid && this.cityWheaterForecastForm.get('dayChoose').valid )
 
   }
 

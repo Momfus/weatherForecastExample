@@ -14,11 +14,11 @@
 
             <mat-form-field>
 
-                <mat-label>* Select a City</mat-label>
-                <mat-select matInput name="mySelect" disableOptionCentering formControlName="cityName">
+                <mat-label>* Select a Province</mat-label>
+                <mat-select matInput name="mySelect" disableOptionCentering formControlName="provinceObject">
 
-                    <mat-option *ngFor="let city of cities" [value]="city.value">
-                        {{city.value}}
+                    <mat-option *ngFor="let province of provinces" [value]="province">
+                        {{province.name}}
                     </mat-option>
 
                 </mat-select>

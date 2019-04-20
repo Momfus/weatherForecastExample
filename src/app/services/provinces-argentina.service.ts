@@ -22,16 +22,6 @@ export class ProvincesArgentinaService {
     },
 
     {
-      id: 3435907,
-      name: 'Provincia de Buenos Aires',
-      country: 'AR',
-      coord: {
-        lon: -60,
-        lat: -36
-      }
-    },
-
-    {
       id: 3862286,
       name: 'Catamarca',
       country: 'AR',
@@ -158,6 +148,16 @@ export class ProvincesArgentinaService {
       coord: {
         lon: -70,
         lat: -39
+      }
+    },
+
+    {
+      id: 3435907,
+      name: 'Provincia de Buenos Aires',
+      country: 'AR',
+      coord: {
+        lon: -60,
+        lat: -36
       }
     },
 

@@ -50,10 +50,24 @@ export class CityWeatherForecastComponent implements OnInit {
   // ----------------------------------
   searchWeatherInfo() {
 
-    let _id = this.cityWheaterForecastForm.value.provinceObject.id;
-    let _days = this.cityWheaterForecastForm.value.dayChoose;
+    const id = this.cityWheaterForecastForm.value.provinceObject.id;
+    const days = this.cityWheaterForecastForm.value.dayChoose;
 
-    this._weatherForecastService.getForecastDialy(_id, _days );
+    this._weatherForecastService.getForecastDialy(id, days )
+        .subscribe(
+
+            (res: any ) => {
+
+                console.log(res);
+
+            },
+            error => {
+
+                console.log(error);
+
+            }
+
+        );
 
   }
 
@@ -61,10 +75,10 @@ export class CityWeatherForecastComponent implements OnInit {
   // ----------------------------------
   // ---> Transform Functions
   // ----------------------------------
-  weatherInfoJsonToModel( _json ) {
+  weatherInfoJsonToModel( weatherJson ) {
 
-    this.weatherInfo.provinceName = _json.provinceName;
-    this.weatherInfo.dayChoose = _json.dayChoose;
+    this.weatherInfo.provinceName = weatherJson.provinceName;
+    this.weatherInfo.dayChoose = weatherJson.dayChoose;
 
   }
 

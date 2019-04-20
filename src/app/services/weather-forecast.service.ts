@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -13,14 +14,14 @@ export class WeatherForecastService {
 
   }
 
-  getForecastDialy( _idCity: number, _daysForecast: number  ) {
+  getForecastDialy( _idCity: number, _daysForecast: number  ): Observable<any>{
 
     console.log(_idCity);
     console.log(_daysForecast);
 
     let _query = `${ this.urlDaily }id=${ _idCity }&units=metric&cnt=${ _daysForecast }&lang=en&appid=${ this.openWeatherApiId }`;
 
-    console.log(_query);
+    return this.http.get(_query);
 
 
 

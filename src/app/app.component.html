@@ -1,5 +1,6 @@
-<div>
+<span *ngIf="showSpinner">
+    <app-weather-spinner></app-weather-spinner>
+</span>
 
-    <router-outlet></router-outlet>
 
-</div>
+<router-outlet></router-outlet>

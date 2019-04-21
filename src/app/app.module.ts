@@ -11,14 +11,19 @@ import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { ROUTES } from './app.routes';
 
-import { MatButtonModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatRadioModule } from '@angular/material';
+import { MatButtonModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatToolbarModule,
+        MatRadioModule, MatProgressSpinnerModule, MatSnackBarModule, MatDividerModule, MatTabsModule,
+        MatCardModule,  MatGridListModule } from '@angular/material';
+
+import { WeatherSpinnerComponent } from './components/weather-spinner/weather-spinner.component';
 
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    CityWeatherForecastComponent
+    CityWeatherForecastComponent,
+    WeatherSpinnerComponent
   ],
   imports: [
     BrowserModule,
@@ -31,7 +36,14 @@ import { MatButtonModule, MatFormFieldModule, MatSelectModule, MatInputModule, M
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
-    MatRadioModule
+    MatRadioModule,
+    MatProgressSpinnerModule,
+    MatSnackBarModule,
+    MatDividerModule,
+    MatToolbarModule,
+    MatTabsModule,
+    MatCardModule,
+    MatGridListModule
   ],
   providers: [],
   bootstrap: [AppComponent]

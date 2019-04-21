@@ -1,11 +1,11 @@
+<!-- Title -->
+<mat-toolbar color="primary" style="justify-content: center">
+    {{ title }}
+</mat-toolbar>
+
 <div class="margin-offset-border-little" style="text-align:center">
 
-    <!-- Title -->
-    <h1>
-        {{ title }}
-    </h1>
-
-    <img width="200" alt="Weather Logo" src="assets/img/weatherLogo.png">
+    <img width="100" alt="Weather Logo" src="assets/img/weatherLogo.png" style="margin-top: 0.5em">
 
     <form role="form" [formGroup]="cityWheaterForecastForm" #formWeather>
 
@@ -38,12 +38,52 @@
 
     <br>
 
-    <button mat-raised-button color="primary" [disabled]="!isWeatherForecastFormValid()" (click)="searchWeatherInfo()">Buscar</button>
+    <!-- Buttons -->
+    <mat-divider style="margin-bottom: 0.5em"></mat-divider>
+    <div class="option-button">
+
+        <button buttonMarginSide mat-raised-button color="primary" [disabled]="!isWeatherForecastFormValid()" (click)="searchWeatherInfo()">Show Forecast</button>
+
+        <button buttonMarginSide mat-raised-button color="primary" [disabled]="!showWeatherInfo" (click)="cleanWeatherInfo()">Clean result</button>
+
+    </div>
+    <br>
+</div>
+<!--- View weather forecast information-->
+<mat-card>
+    <mat-toolbar color="accent">
+        Weather Information
+    </mat-toolbar>
+
+    <!-- No information -->
+    <div *ngIf="!showWeatherInfo" style="text-align:center">
+        <p>{{messageWeatherInformation}}</p>
+    </div>
+
+    <!-- Weather forecast founded -->
+    <div *ngIf="showWeatherInfo">
+        <mat-tab-group>
+            <mat-tab *ngFor="let weatherData of listWeatherInfo" [label]="weatherData.date | date ">
+
+                <mat-grid-list cols="2" rowHeight="10:1">
+                    <mat-grid-tile>Weather: </mat-grid-tile>
+                    <mat-grid-tile>
+                        <img [src]="weatherData.icon" alt='current weather icon'> {{weatherData.weather}}
+                    </mat-grid-tile>
+
+                    <mat-grid-tile>Min: </mat-grid-tile>
+                    <mat-grid-tile>{{weatherData.tempMin | number: '1.0-0'}}ºC</mat-grid-tile>
+
+                    <mat-grid-tile>Max: </mat-grid-tile>
+                    <mat-grid-tile>{{weatherData.tempMax | number: '1.0-0'}}ºC</mat-grid-tile>
+
+                    <mat-grid-tile>Humidity: </mat-grid-tile>
+                    <mat-grid-tile>{{weatherData.humidity}}%</mat-grid-tile>
+                </mat-grid-list>
+
+            </mat-tab>
+        </mat-tab-group>
+    </div>
 
     <br>
-
-    <!--- View weather forecast information-->
-    <hr>
-    <p>Info</p>
-
-</div>
+</mat-card>

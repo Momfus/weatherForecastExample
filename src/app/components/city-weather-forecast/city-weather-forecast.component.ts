@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ɵConsole } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { WeatherInfo } from '../../models/weather-info';
 import { ProvinceInfo } from '../../models/province-info';
 import { ProvincesArgentinaService } from '../../services/provinces-argentina.service';
 import { WeatherForecastService } from '../../services/weather-forecast.service';
+import { SpinnerService } from '../../services/spinner.service';
+import {MatSnackBar} from '@angular/material';
 
 
 
@@ -13,93 +15,142 @@ import { WeatherForecastService } from '../../services/weather-forecast.service'
 })
 export class CityWeatherForecastComponent implements OnInit {
 
-  // ----------------------------------
-  // --> Attributes
-  // ----------------------------------
+    // ----------------------------------
+    // --> Attributes
+    // ----------------------------------
 
-  title = 'Argentina Weather Forecast';
-  weatherInfo: WeatherInfo = {
+    title = 'Argentina Weather Forecast';
+    messageArrayType =  [
+        'Searching...',
+        'There isn\'t any weather forecast information'
+    ]
+    messageWeatherInformation = this.messageArrayType[1];
 
-    provinceName: '',
-    dayChoose: ''
+    listWeatherInfo: WeatherInfo[] = [];
+    showWeatherInfo = false;
 
-  }
+    provinces: ProvinceInfo[];
+    cityWheaterForecastForm: FormGroup;
 
-  provinces: ProvinceInfo[];
-  cityWheaterForecastForm: FormGroup;
+    // ----------------------------------
+    // ---> Constructor / OnInit
+    // ----------------------------------
 
-  // ----------------------------------
-  // ---> Constructor / OnInit
-  // ----------------------------------
+    constructor(
+        private formBuilder: FormBuilder,
+        private _provinceArgentinaService: ProvincesArgentinaService,
+        private _weatherForecastService: WeatherForecastService,
+        private spinnerService: SpinnerService,
+        private snackBar: MatSnackBar
+    ) { }
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private _provinceArgentinaService: ProvincesArgentinaService,
-    private _weatherForecastService: WeatherForecastService
-  ) { }
+    ngOnInit() {
 
-  ngOnInit() {
+        this.provinces = this._provinceArgentinaService.getProvinces();
+        this.cityWheaterForecastForm = this.buildFormCityWheaterForecast();
 
-    this.provinces = this._provinceArgentinaService.getProvinces();
-    this.cityWheaterForecastForm = this.buildFormCityWheaterForecast();
+    }
 
-  }
+    // ----------------------------------
+    // ---> General Functions
+    // ----------------------------------
+    searchWeatherInfo() {
+        this.showWeatherInfo = false;
+        this.messageWeatherInformation = this.messageArrayType[0];
+        const id = this.cityWheaterForecastForm.value.provinceObject.id;
+        const days = this.cityWheaterForecastForm.value.dayChoose;
 
-  // ----------------------------------
-  // ---> General Functions
-  // ----------------------------------
-  searchWeatherInfo() {
+        this.spinnerService.displayLoader(true)
 
-    const id = this.cityWheaterForecastForm.value.provinceObject.id;
-    const days = this.cityWheaterForecastForm.value.dayChoose;
+        this._weatherForecastService.getForecastDialy(id, days )
+            .subscribe(
 
-    this._weatherForecastService.getForecastDialy(id, days )
-        .subscribe(
+                (res: any ) => {
 
-            (res: any ) => {
+                    this.setListWeatherInfo(res);
+                    this.spinnerService.displayLoader(false);
+                    this.snackBar.open('Forecast finded!', '', {duration: 2000});
 
-                console.log(res);
+                },
+                error => {
 
-            },
-            error => {
+                    this.messageWeatherInformation = this.messageArrayType[1];
+                    this.spinnerService.displayLoader(false);
+                    this.snackBar.open('Forecast not finded :(', `ERROR: ${error.status}`, {duration: 5000});
+                }
 
-                console.log(error);
+            );
 
-            }
-
-        );
-
-  }
+    }
 
 
-  // ----------------------------------
-  // ---> Transform Functions
-  // ----------------------------------
-  weatherInfoJsonToModel( weatherJson ) {
+    // ----------------------------------
+    // ---> Weather Info Functions
+    // ----------------------------------
 
-    this.weatherInfo.provinceName = weatherJson.provinceName;
-    this.weatherInfo.dayChoose = weatherJson.dayChoose;
+    setListWeatherInfo( resJson: any ) {
 
-  }
+        this.listWeatherInfo = [];
+        this.showWeatherInfo = true;
 
-  // ----------------------------------
-  // ---> Forms functions
-  // ----------------------------------
-  buildFormCityWheaterForecast() {
+        let auxWeatherInfo: WeatherInfo;
+        let auxTempMin: number;
+        let auxTempMax: number;
+        let auxHumidity: number;
+        let auxWeather: string;
+        let auxDate: Date;
+        let auxIcon: string;
 
-    return this.formBuilder.group({
+        for( let i = 0; i < resJson.list.length; i++ ) {
 
-      provinceObject: ['', Validators.required],
-      dayChoose: ['', Validators.required]
+            auxTempMin = resJson.list[i].temp.min;
+            auxTempMax = resJson.list[i].temp.max;
+            auxHumidity = resJson.list[i].humidity;
+            auxWeather = resJson.list[i].weather[0].main;
+            auxIcon = `https://openweathermap.org/img/w/${resJson.list[i].weather[0].icon}.png`;
 
-    });
+            /* NOTE:
+                I know is a little messy but the API use "unix timestamps" and this was the only easy way i found to
+                do show the correct date
+            */
+            auxDate = new Date(resJson.list[i].dt * 1000   );
+            auxDate.setDate( auxDate.getDate() + 1 );
 
-  }
+            auxWeatherInfo = new WeatherInfo(auxTempMin, auxTempMax, auxHumidity, auxWeather, auxDate, auxIcon );
+            this.listWeatherInfo.push( auxWeatherInfo );
+        }
 
-  isWeatherForecastFormValid(): boolean {
 
-    return ( this.cityWheaterForecastForm.get('provinceObject').valid && this.cityWheaterForecastForm.get('dayChoose').valid )
+    }
 
-  }
+    cleanWeatherInfo() {
+
+        this.showWeatherInfo = false;
+        this.cityWheaterForecastForm.reset();
+
+        this.messageWeatherInformation = this.messageArrayType[1];
+        this.snackBar.open('Weather forecast information cleaned', ':)', {duration: 2000});
+
+    }
+
+    // ----------------------------------
+    // ---> Forms functions
+    // ----------------------------------
+    buildFormCityWheaterForecast() {
+
+        return this.formBuilder.group({
+
+            provinceObject: ['', Validators.required],
+            dayChoose: ['', Validators.required]
+
+        });
+
+    }
+
+    isWeatherForecastFormValid(): boolean {
+
+        return ( this.cityWheaterForecastForm.get('provinceObject').valid && this.cityWheaterForecastForm.get('dayChoose').valid )
+
+    }
 
 }

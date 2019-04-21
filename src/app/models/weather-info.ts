@@ -6,8 +6,12 @@ export class WeatherInfo {
     */
 
     constructor(
-        public provinceName: string,
-        public dayChoose: string
+        public tempMin: number,
+        public tempMax: number,
+        public humidity: number,
+        public weather: string,
+        public date: Date,
+        public icon: string
     ) {}
 
 

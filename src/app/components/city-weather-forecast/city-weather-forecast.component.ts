@@ -1,4 +1,4 @@
-import { Component, OnInit, ɵConsole } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { WeatherInfo } from '../../models/weather-info';
 import { ProvinceInfo } from '../../models/province-info';
@@ -38,15 +38,15 @@ export class CityWeatherForecastComponent implements OnInit {
 
     constructor(
         private formBuilder: FormBuilder,
-        private _provinceArgentinaService: ProvincesArgentinaService,
-        private _weatherForecastService: WeatherForecastService,
+        private provinceArgentinaService: ProvincesArgentinaService,
+        public weatherForecastService: WeatherForecastService,
         private spinnerService: SpinnerService,
         private snackBar: MatSnackBar
     ) { }
 
     ngOnInit() {
 
-        this.provinces = this._provinceArgentinaService.getProvinces();
+        this.provinces = this.provinceArgentinaService.getProvinces();
         this.cityWheaterForecastForm = this.buildFormCityWheaterForecast();
 
     }
@@ -62,7 +62,7 @@ export class CityWeatherForecastComponent implements OnInit {
 
         this.spinnerService.displayLoader(true)
 
-        this._weatherForecastService.getForecastDialy(id, days )
+        this.weatherForecastService.getForecastDaily(id, days )
             .subscribe(
 
                 (res: any ) => {
@@ -117,6 +117,7 @@ export class CityWeatherForecastComponent implements OnInit {
             auxDate.setDate( auxDate.getDate() + 1 );
 
             auxWeatherInfo = new WeatherInfo(auxTempMin, auxTempMax, auxHumidity, auxWeather, auxDate, auxIcon );
+            console.log(JSON.stringify( auxWeatherInfo, null, 2 ));
             this.listWeatherInfo.push( auxWeatherInfo );
         }
 

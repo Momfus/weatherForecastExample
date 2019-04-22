@@ -14,13 +14,11 @@ export class WeatherForecastService {
 
   }
 
-  getForecastDialy( _idCity: number, _daysForecast: number  ): Observable<any>{
+  getForecastDaily( _idCity: number, _daysForecast: number  ): Observable<any>{
 
     let _query = `${ this.urlDaily }id=${ _idCity }&units=metric&cnt=${ _daysForecast }&lang=en&appid=${ this.openWeatherApiId }`;
 
     return this.http.get(_query);
-
-
 
   }
 
